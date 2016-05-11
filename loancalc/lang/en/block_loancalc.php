@@ -26,18 +26,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['amountofloan'] = 'Amount of loan';
+$string['amountofloan'] = ' ';
 $string['calculatethis'] = 'Calculate this value';
-$string['fortnightly'] = 'Fortnightly';
-$string['inserthelp'] = 'Insert two of the following parameters and click the calculator icon to calculate the third one.';
+$string['fortnightly'] = 'Homework';
+$string['inserthelp'] = 'Insert your grades on this course for the chosen evaluations';
 $string['insertvalue'] = 'Insert value';
-$string['interestrate'] = 'Interest rate';
-$string['loancalc'] = 'Loan calculator';
+$string['interestrate'] = 'Percentage of semester done';
+$string['loancalc'] = 'Grades Calculator ';
 $string['loancalc:addinstance'] = 'Add a new loan calculator block';
 $string['loancalc:myaddinstance'] = 'Add a new loan calculator block to own dashboard page';
-$string['loanterm'] = 'Loan term (years)';
-$string['monthly'] = 'Monthly';
+$string['loanterm'] = ' ';
+$string['monthly'] = 'Controls';
 $string['pluginname'] = 'Loan calculator';
-$string['repaymentamount'] = 'Repayment amount';
-$string['repaymentfreq'] = 'Repayment frequency';
-$string['weekly'] = 'Weekly';
+$string['repaymentamount'] = ' ';
+$string['repaymentfreq'] = 'Evaluation type';
+$string['weekly'] = 'Test';

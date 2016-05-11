@@ -25,6 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_loancalc';
 $plugin->release = '0.9.0';
-$plugin->version = 2016040100;
+$plugin->version = 2016040103;
 $plugin->maturity = MATURITY_BETA;
 $plugin->requires = 2015111600;
