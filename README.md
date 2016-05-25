@@ -1,5 +1,7 @@
 # GIM
 
-Calculator is a plugin that must be added to the blocks folder on moodle
+Widget is a module for moodle
 
-Calculator es un plugin que debe ser agregado a la carpeta de blocks de Moodle
+It must be added to the mod folder on moodle
+
+you must create a new element on the page and select th widget icon
