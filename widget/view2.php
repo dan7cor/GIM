@@ -30,13 +30,8 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
+$id = $_GET["id"]; // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
-
-if(isset($_GET["var"])){
-    $id=$_GET["var"];
-    var_dump($id);
-}
 
 if ($id) {
     $cm         = get_coursemodule_from_id('widget', $id, 0, false, MUST_EXIST);
@@ -84,12 +79,12 @@ $t1=' ';
 $t2=' ';
 $t3=' ';
 // Replace the following lines with you own code.
-/*if((isset($_POST['test1']))&&(isset($_POST['test2']))&&(isset($_POST['test3']))){
-    $t1=$_POST['test1'];
-    $t2=$_POST['test2'];
-    $t3=$_POST['test3'];
+if((isset($_GET['test1']))&&(isset($_GET['test2']))&&(isset($_GET['test3']))){
+    $t1=$_GET['test1'];
+    $t2=$_GET['test2'];
+    $t3=$_GET['test3'];
     $fg=($t1+$t2+$t3)/3;
-}*/
+}
 
 echo $OUTPUT->heading('Grade Calculator');
 echo ("<form action='view2.php'>
@@ -97,18 +92,17 @@ echo ("<form action='view2.php'>
     <legend>Personal information:</legend>
     <input type='hidden' name='id' value=".$id."><br>
     Prueba 1:<br>
-    <input type='text' name='test1' value=''><br>
+    <input type='text' name='test1' value=".$t1."><br>
     Prueba 2:<br>
-    <input type='text' name='test2' value=''><br>
+    <input type='text' name='test2' value=".$t2."><br>
     Prueba 3:<br>
-    <input type='text' name='test3' value=''><br><br>
-    <input type='submit' value='Probar'>
+    <input type='text' name='test3' value=".$t3."><br><br>
+    <h4>Nota Final:</h4><br>
+    <input type='text' name='test2' value=".$t2."><br>
   </fieldset>
 </form>");
-/*echo("<form>
-  Nota Final:<br>
-  <input type='text' name='final' value=''><br>
-</form>");*/
+
+echo ("<br><a href='view.php?var=".$id."'>Volver a la calculadora</a>");
 
 // Finish the page.
 echo $OUTPUT->footer();
