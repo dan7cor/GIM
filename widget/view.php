@@ -29,13 +29,13 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/database_connect.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
 
 if(isset($_GET["var"])){
     $id=$_GET["var"];
-    var_dump($id);
 }
 
 if ($id) {
@@ -73,6 +73,29 @@ $PAGE->set_heading(format_string($course->fullname));
  * $PAGE->add_body_class('newmodule-'.$somevar);
  */
 
+//database call
+
+$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
+$query_test_grade = "SELECT finalgrade FROM mdl_grade_grades WHERE (itemid>1) AND userid=".$id;
+
+$response = @mysqli_query($dbc,$query_test_names);
+$response2 = @mysqli_query($dbc,$query_test_names);
+$response3 = @mysqli_query($dbc,$query_test_grade);
+
+if($response2){
+   $array = [];
+    while($row2 = mysqli_fetch_array($response2) and $row3 = mysqli_fetch_array($response3)){ 
+        $name=$row2['itemname'];
+        $value=$row3['finalgrade'];
+        $name=str_ireplace(" ","",$name);
+        $array[$name]=$value;
+    }
+
+}
+
+
+
+
 // Output starts here.
 echo $OUTPUT->header();
 
@@ -80,9 +103,8 @@ echo $OUTPUT->header();
 if ($widget->intro) {
     echo $OUTPUT->box(format_module_intro('widget', $widget, $cm->id), 'generalbox mod_introbox', 'widgetintro');
 }
-$t1=' ';
-$t2=' ';
-$t3=' ';
+
+
 // Replace the following lines with you own code.
 /*if((isset($_POST['test1']))&&(isset($_POST['test2']))&&(isset($_POST['test3']))){
     $t1=$_POST['test1'];
@@ -92,19 +114,34 @@ $t3=' ';
 }*/
 
 echo $OUTPUT->heading('Grade Calculator');
-echo ("<form action='view2.php'>
-  <fieldset>
-    <legend>Personal information:</legend>
-    <input type='hidden' name='id' value=".$id."><br>
-    Prueba 1:<br>
-    <input type='text' name='test1' value=''><br>
-    Prueba 2:<br>
-    <input type='text' name='test2' value=''><br>
-    Prueba 3:<br>
-    <input type='text' name='test3' value=''><br><br>
-    <input type='submit' value='Probar'>
-  </fieldset>
-</form>");
+
+if($response){
+    echo ("<form action='view2.php'>
+        <fieldset>
+            <legend>Tests:</legend>
+                <input type='hidden' name='id' value=".$id."><br>");
+    while($row = mysqli_fetch_array($response)){
+        $name=$row['itemname'];
+        $name_get=str_ireplace(" ","",$name);
+        echo ($name.":<br>");
+        echo ("<input type='number' name=".$name_get." value='".$array[$name_get]."' max='70'><br>  ");
+    }
+    echo("      <input type='submit' value='Probar'>
+            </fieldset>
+        </form>");
+
+}
+
+
+
+
+
+
+
+
+
+
+    
 /*echo("<form>
   Nota Final:<br>
   <input type='text' name='final' value=''><br>

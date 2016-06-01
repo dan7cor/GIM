@@ -29,6 +29,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/database_connect.php');
 
 $id = $_GET["id"]; // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
@@ -79,6 +80,42 @@ $t1=' ';
 $t2=' ';
 $t3=' ';
 // Replace the following lines with you own code.
+
+
+$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
+
+$response = @mysqli_query($dbc,$query_test_names);
+
+
+
+
+echo $OUTPUT->heading('Grade Calculator');
+
+if($response){
+    $cont=0;
+    $nota_final=0;
+    echo ("<form action='view2.php'>
+        <fieldset>
+            <legend>Tests:</legend>
+                <input type='hidden' name='id' value=".$id."><br>");
+    while($row = mysqli_fetch_array($response)){
+        $name=$row['itemname'];
+       
+        $name_var=str_ireplace(" ","",$name);
+        $nota_final+=$_GET[$name_var];
+        echo ($name.":<br>");
+        echo ("<input type='number' value=".$_GET[$name_var]." max='70'><br>");
+        $cont++;
+    }
+    $nota_final=$nota_final/$cont;
+    echo("      <h4>Nota Final:</h4><br>
+                <input type='text' value=".$nota_final."><br>
+            </fieldset>
+        </form>");
+
+}
+/*
+
 if((isset($_GET['test1']))&&(isset($_GET['test2']))&&(isset($_GET['test3']))){
     $t1=$_GET['test1'];
     $t2=$_GET['test2'];
@@ -86,7 +123,7 @@ if((isset($_GET['test1']))&&(isset($_GET['test2']))&&(isset($_GET['test3']))){
     $fg=($t1+$t2+$t3)/3;
 }
 
-echo $OUTPUT->heading('Grade Calculator');
+
 echo ("<form action='view2.php'>
   <fieldset>
     <legend>Personal information:</legend>
@@ -97,10 +134,9 @@ echo ("<form action='view2.php'>
     <input type='text' name='test2' value=".$t2."><br>
     Prueba 3:<br>
     <input type='text' name='test3' value=".$t3."><br><br>
-    <h4>Nota Final:</h4><br>
-    <input type='text' name='test2' value=".$t2."><br>
+    <
   </fieldset>
-</form>");
+</form>");*/
 
 echo ("<br><a href='view.php?var=".$id."'>Volver a la calculadora</a>");
 
