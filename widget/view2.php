@@ -97,7 +97,7 @@ if($response){
     echo ("<form action='view2.php'>
         <fieldset>
             <legend>Tests:</legend>
-                <input type='hidden' name='id' value=".$id."><br>");
+                <input type='hidden' name='id' value=".$USER->id."><br>");
     while($row = mysqli_fetch_array($response)){
         $name=$row['itemname'];
        

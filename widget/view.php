@@ -76,7 +76,7 @@ $PAGE->set_heading(format_string($course->fullname));
 //database call
 
 $query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
-$query_test_grade = "SELECT finalgrade FROM mdl_grade_grades WHERE (itemid>1) AND userid=".$id;
+$query_test_grade = "SELECT finalgrade FROM mdl_grade_grades WHERE (itemid>1) AND userid=".$USER->id;
 
 $response = @mysqli_query($dbc,$query_test_names);
 $response2 = @mysqli_query($dbc,$query_test_names);
@@ -119,10 +119,14 @@ if($response){
     echo ("<form action='view2.php'>
         <fieldset>
             <legend>Tests:</legend>
-                <input type='hidden' name='id' value=".$id."><br>");
+                <input type='hidden' name='id' value=".$USER->id."><br>");
     while($row = mysqli_fetch_array($response)){
+
         $name=$row['itemname'];
         $name_get=str_ireplace(" ","",$name);
+        if(!isset($array[$name_get])){
+            $array[$name_get]="0";
+        }
         echo ($name.":<br>");
         echo ("<input type='number' name=".$name_get." value='".$array[$name_get]."' max='70'><br>  ");
     }
