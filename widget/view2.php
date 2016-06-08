@@ -31,8 +31,9 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/database_connect.php');
 
-$id = $_GET["id"]; // Course_module ID, or
+$id = $USER->id; // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
+
 
 if ($id) {
     $cm         = get_coursemodule_from_id('widget', $id, 0, false, MUST_EXIST);
@@ -82,7 +83,8 @@ $t3=' ';
 // Replace the following lines with you own code.
 
 
-$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
+$query_test_names = "SELECT itemname,aggregationcoef2 FROM mdl_grade_items WHERE (id>1)";
+//$query_test_weight = "SELECT aggregationvoef2 FROM mdl_grade_items WHERE (id>1)";
 
 $response = @mysqli_query($dbc,$query_test_names);
 
@@ -100,14 +102,14 @@ if($response){
                 <input type='hidden' name='id' value=".$USER->id."><br>");
     while($row = mysqli_fetch_array($response)){
         $name=$row['itemname'];
-       
+        $weight=$row['aggregationcoef2'];
         $name_var=str_ireplace(" ","",$name);
-        $nota_final+=$_GET[$name_var];
+        $grade=$_GET[$name_var]*$weight;
+        $nota_final+=$grade;
         echo ($name.":<br>");
         echo ("<input type='number' value=".$_GET[$name_var]." max='70'><br>");
         $cont++;
     }
-    $nota_final=$nota_final/$cont;
     echo("      <h4>Nota Final:</h4><br>
                 <input type='text' value=".$nota_final."><br>
             </fieldset>

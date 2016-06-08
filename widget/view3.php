@@ -31,12 +31,9 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/database_connect.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
+$id = $_GET["id"]; // Course_module ID, or
+var_dump($id);
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
-
-if(isset($_GET["var"])){
-    $id=$_GET["var"];
-}
 
 if ($id) {
     $cm         = get_coursemodule_from_id('widget', $id, 0, false, MUST_EXIST);
@@ -62,7 +59,7 @@ $event->trigger();
 
 // Print the page header.
 
-$PAGE->set_url('/mod/widget/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/widget/view3.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($widget->name));
 $PAGE->set_heading(format_string($course->fullname));
 
@@ -73,29 +70,6 @@ $PAGE->set_heading(format_string($course->fullname));
  * $PAGE->add_body_class('newmodule-'.$somevar);
  */
 
-//database call
-
-$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
-$query_test_grade = "SELECT finalgrade FROM mdl_grade_grades WHERE (itemid>1) AND userid=".$USER->id;
-
-$response = @mysqli_query($dbc,$query_test_names);
-$response2 = @mysqli_query($dbc,$query_test_names);
-$response3 = @mysqli_query($dbc,$query_test_grade);
-
-if($response2){
-   $array = [];
-    while($row2 = mysqli_fetch_array($response2) and $row3 = mysqli_fetch_array($response3)){ 
-        $name=$row2['itemname'];
-        $value=$row3['finalgrade'];
-        $name=str_ireplace(" ","",$name);
-        $array[$name]=$value;
-    }
-
-}
-
-
-
-
 // Output starts here.
 echo $OUTPUT->header();
 
@@ -103,56 +77,69 @@ echo $OUTPUT->header();
 if ($widget->intro) {
     echo $OUTPUT->box(format_module_intro('widget', $widget, $cm->id), 'generalbox mod_introbox', 'widgetintro');
 }
-
-
+$t1=' ';
+$t2=' ';
+$t3=' ';
 // Replace the following lines with you own code.
-/*if((isset($_POST['test1']))&&(isset($_POST['test2']))&&(isset($_POST['test3']))){
-    $t1=$_POST['test1'];
-    $t2=$_POST['test2'];
-    $t3=$_POST['test3'];
-    $fg=($t1+$t2+$t3)/3;
-}*/
+
+
+//$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
+
+//$response = @mysqli_query($dbc,$query_test_names);
+
+
+
 
 echo $OUTPUT->heading('Grade Calculator');
 
 if($response){
+    $cont=0;
+    $nota_final=0;
     echo ("<form action='view2.php'>
         <fieldset>
             <legend>Tests:</legend>
                 <input type='hidden' name='id' value=".$USER->id."><br>");
     while($row = mysqli_fetch_array($response)){
-
         $name=$row['itemname'];
-        $name_get=str_ireplace(" ","",$name);
-        if(!isset($array[$name_get])){
-            $array[$name_get]="0";
-        }
+       
+        $name_var=str_ireplace(" ","",$name);
+        $nota_final+=$_GET[$name_var];
         echo ($name.":<br>");
-        echo ("<input type='number' name=".$name_get." value='".$array[$name_get]."' max='70'><br>  ");
+        echo ("<input type='number' value=".$_GET[$name_var]." max='70'><br>");
+        $cont++;
     }
-    echo("      <input type='submit' value='Probar'>
+    $nota_final=$nota_final/$cont;
+    echo("      <h4>Nota Final:</h4><br>
+                <input type='text' value=".$nota_final."><br>
             </fieldset>
         </form>");
 
-}/*
-echo("<br>");
-echo("<form action='view3.php'>     
-         <h4>Nota Final:</h4><br>
-                <input type='hidden' name='id' value=".$USER->id."><br>
-                <input type='text'><br>
-                <input type='submit' value='Probar'>
-            </fieldset>
-        </form>");*/
+}
+/*
+
+if((isset($_GET['test1']))&&(isset($_GET['test2']))&&(isset($_GET['test3']))){
+    $t1=$_GET['test1'];
+    $t2=$_GET['test2'];
+    $t3=$_GET['test3'];
+    $fg=($t1+$t2+$t3)/3;
+}
 
 
-
-
-
-    
-/*echo("<form>
-  Nota Final:<br>
-  <input type='text' name='final' value=''><br>
+echo ("<form action='view2.php'>
+  <fieldset>
+    <legend>Personal information:</legend>
+    <input type='hidden' name='id' value=".$id."><br>
+    Prueba 1:<br>
+    <input type='text' name='test1' value=".$t1."><br>
+    Prueba 2:<br>
+    <input type='text' name='test2' value=".$t2."><br>
+    Prueba 3:<br>
+    <input type='text' name='test3' value=".$t3."><br><br>
+    <
+  </fieldset>
 </form>");*/
+
+echo ("<br><a href='view.php?var=".$id."'>Volver a la calculadora</a>");
 
 // Finish the page.
 echo $OUTPUT->footer();
