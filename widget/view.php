@@ -82,6 +82,8 @@ $response = @mysqli_query($dbc,$query_test_names);
 $response2 = @mysqli_query($dbc,$query_test_names);
 $response3 = @mysqli_query($dbc,$query_test_grade);
 
+//The grades for every test is saved in the array in this if
+
 if($response2){
    $array = [];
     while($row2 = mysqli_fetch_array($response2) and $row3 = mysqli_fetch_array($response3)){ 
@@ -105,15 +107,9 @@ if ($widget->intro) {
 }
 
 
-// Replace the following lines with you own code.
-/*if((isset($_POST['test1']))&&(isset($_POST['test2']))&&(isset($_POST['test3']))){
-    $t1=$_POST['test1'];
-    $t2=$_POST['test2'];
-    $t3=$_POST['test3'];
-    $fg=($t1+$t2+$t3)/3;
-}*/
-
 echo $OUTPUT->heading('Grade Calculator');
+
+$grades_flag=FALSE;
 
 if($response){
     echo ("<form action='view2.php'>
@@ -126,6 +122,7 @@ if($response){
         $name_get=str_ireplace(" ","",$name);
         if(!isset($array[$name_get])){
             $array[$name_get]="0";
+            $grades_flag=TRUE;
         }
         echo ($name.":<br>");
         echo ("<input type='number' name=".$name_get." value='".$array[$name_get]."' max='70'><br>  ");
@@ -134,16 +131,17 @@ if($response){
             </fieldset>
         </form>");
 
-}/*
+}
+if($grades_flag){
 echo("<br>");
 echo("<form action='view3.php'>     
          <h4>Nota Final:</h4><br>
                 <input type='hidden' name='id' value=".$USER->id."><br>
-                <input type='text'><br>
+                <input type='text' name='expected'><br>
                 <input type='submit' value='Probar'>
             </fieldset>
-        </form>");*/
-
+        </form>");
+}
 
 
 

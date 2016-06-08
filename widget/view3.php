@@ -31,8 +31,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/database_connect.php');
 
-$id = $_GET["id"]; // Course_module ID, or
-var_dump($id);
+$id = $USER->id; // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
 
 if ($id) {
@@ -77,15 +76,29 @@ echo $OUTPUT->header();
 if ($widget->intro) {
     echo $OUTPUT->box(format_module_intro('widget', $widget, $cm->id), 'generalbox mod_introbox', 'widgetintro');
 }
-$t1=' ';
-$t2=' ';
-$t3=' ';
+
+$final_grade=$_GET['expected    '];
+
 // Replace the following lines with you own code.
 
 
-//$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
+$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
+$query_test_grade = "SELECT finalgrade FROM mdl_grade_grades WHERE (itemid>1) AND userid=".$USER->id;
 
-//$response = @mysqli_query($dbc,$query_test_names);
+$response = @mysqli_query($dbc,$query_test_names);
+$response2 = @mysqli_query($dbc,$query_test_names);
+$response3 = @mysqli_query($dbc,$query_test_grade);
+if($response2){
+   $array = [];
+    while($row2 = mysqli_fetch_array($response2) and $row3 = mysqli_fetch_array($response3)){ 
+        $name=$row2['itemname'];
+        $value=$row3['finalgrade'];
+        $name=str_ireplace(" ","",$name);
+        $array[$name]=$value;
+
+    }
+
+}
 
 
 
@@ -99,13 +112,16 @@ if($response){
         <fieldset>
             <legend>Tests:</legend>
                 <input type='hidden' name='id' value=".$USER->id."><br>");
+
     while($row = mysqli_fetch_array($response)){
         $name=$row['itemname'];
        
         $name_var=str_ireplace(" ","",$name);
-        $nota_final+=$_GET[$name_var];
+        if(!isset($array[$name_var])){
+            $array[$name_var]="0";
+        }
         echo ($name.":<br>");
-        echo ("<input type='number' value=".$_GET[$name_var]." max='70'><br>");
+        echo ("<input type='number' value=".$array[$name_var]." max='70'><br>");
         $cont++;
     }
     $nota_final=$nota_final/$cont;
