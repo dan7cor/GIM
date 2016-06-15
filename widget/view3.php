@@ -31,56 +31,23 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/database_connect.php');
 
-$id = $USER->id; // Course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
+$context = context_system::instance();
+$PAGE->set_context($context);
+$name = "Calculadora";
 
-if ($id) {
-    $cm         = get_coursemodule_from_id('widget', $id, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $widget  = $DB->get_record('widget', array('id' => $cm->instance), '*', MUST_EXIST);
-} else if ($n) {
-    $widget  = $DB->get_record('widget', array('id' => $n), '*', MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $widget->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('widget', $widget->id, $course->id, false, MUST_EXIST);
-} else {
-    error('You must specify a course_module ID or an instance ID');
-}
 
-require_login($course, true, $cm);
 
-$event = \mod_widget\event\course_module_viewed::create(array(
-    'objectid' => $PAGE->cm->instance,
-    'context' => $PAGE->context,
-));
-$event->add_record_snapshot('course', $PAGE->course);
-$event->add_record_snapshot($PAGE->cm->modname, $widget);
-$event->trigger();
+// Check that user is logued in the course.
+require_login();
+// Page navigation and URL settings.
+$PAGE->set_url('/mod/widget/view.php', array('filter'=>$name));
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_title('Calculadora');
 
-// Print the page header.
 
-$PAGE->set_url('/mod/widget/view3.php', array('id' => $cm->id));
-$PAGE->set_title(format_string($widget->name));
-$PAGE->set_heading(format_string($course->fullname));
 
-/*
- * Other things you may want to set - remove if not needed.
- * $PAGE->set_cacheable(false);
- * $PAGE->set_focuscontrol('some-html-id');
- * $PAGE->add_body_class('newmodule-'.$somevar);
- */
 
-// Output starts here.
-echo $OUTPUT->header();
-
-// Conditions to show the intro can change to look for own settings or whatever.
-if ($widget->intro) {
-    echo $OUTPUT->box(format_module_intro('widget', $widget, $cm->id), 'generalbox mod_introbox', 'widgetintro');
-}
-
-$final_grade=$_GET['expected    '];
-
-// Replace the following lines with you own code.
-
+$final_grade=$_GET['expected'];
 
 $query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
 $query_test_grade = "SELECT finalgrade FROM mdl_grade_grades WHERE (itemid>1) AND userid=".$USER->id;
@@ -103,11 +70,11 @@ if($response2){
 
 
 
+
+echo $OUTPUT->header();
 echo $OUTPUT->heading('Grade Calculator');
 
 if($response){
-    $cont=0;
-    $nota_final=0;
     echo ("<form action='view2.php'>
         <fieldset>
             <legend>Tests:</legend>
@@ -118,15 +85,17 @@ if($response){
        
         $name_var=str_ireplace(" ","",$name);
         if(!isset($array[$name_var])){
-            $array[$name_var]="0";
+            $array[$name_var]=$final_grade;
+        }
+        else{
+            
         }
         echo ($name.":<br>");
         echo ("<input type='number' value=".$array[$name_var]." max='70'><br>");
-        $cont++;
+      
     }
-    $nota_final=$nota_final/$cont;
     echo("      <h4>Nota Final:</h4><br>
-                <input type='text' value=".$nota_final."><br>
+                <input type='text' value=".$final_grade."><br>
             </fieldset>
         </form>");
 
@@ -155,7 +124,7 @@ echo ("<form action='view2.php'>
   </fieldset>
 </form>");*/
 
-echo ("<br><a href='view.php?var=".$id."'>Volver a la calculadora</a>");
+//echo ("<br><a href='view.php?var=".$id."'>Volver a la calculadora</a>");
 
 // Finish the page.
 echo $OUTPUT->footer();

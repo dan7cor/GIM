@@ -34,12 +34,15 @@ require_once(dirname(__FILE__).'/database_connect.php');
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
 
+
+
+
 if(isset($_GET["var"])){
     $id=$_GET["var"];
 }
 
 if ($id) {
-    $cm         = get_coursemodule_from_id('widget', $id, 0, false, MUST_EXIST);
+    $cm         = get_coursemodule_from_id('widget', $id , 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $widget  = $DB->get_record('widget', array('id' => $cm->instance), '*', MUST_EXIST);
 } else if ($n) {
@@ -49,6 +52,8 @@ if ($id) {
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
+
+
 
 require_login($course, true, $cm);
 
@@ -139,7 +144,7 @@ echo("<form action='view3.php'>
                 <input type='hidden' name='id' value=".$USER->id."><br>
                 <input type='text' name='expected'><br>
                 <input type='submit' value='Probar'>
-            </fieldset>
+           
         </form>");
 }
 
