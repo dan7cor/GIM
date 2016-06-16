@@ -46,15 +46,18 @@ $PAGE->set_title('Calculadora');
 
 
 
-
+//final_grade is the grade you expect to get at the end of the semester
 $final_grade=$_GET['expected'];
 
-$query_test_names = "SELECT itemname FROM mdl_grade_items WHERE (id>1)";
+//Here you make the different querys to the database
+$query_test_names = "SELECT itemname,aggregationcoef2 FROM mdl_grade_items WHERE (id>1)";
 $query_test_grade = "SELECT finalgrade FROM mdl_grade_grades WHERE (itemid>1) AND userid=".$USER->id;
 
 $response = @mysqli_query($dbc,$query_test_names);
 $response2 = @mysqli_query($dbc,$query_test_names);
 $response3 = @mysqli_query($dbc,$query_test_grade);
+
+//Once the query has been made, you assign the values of the DB to the variables
 if($response2){
    $array = [];
     while($row2 = mysqli_fetch_array($response2) and $row3 = mysqli_fetch_array($response3)){ 
@@ -74,25 +77,46 @@ if($response2){
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Grade Calculator');
 
+
+//You print the form for viewing your grades
 if($response){
     echo ("<form action='view2.php'>
         <fieldset>
             <legend>Tests:</legend>
                 <input type='hidden' name='id' value=".$USER->id."><br>");
 
+    $grade =$final_grade;
     while($row = mysqli_fetch_array($response)){
         $name=$row['itemname'];
-       
+        $weight=$row['aggregationcoef2'];
         $name_var=str_ireplace(" ","",$name);
+
+
+
         if(!isset($array[$name_var])){
-            $array[$name_var]=$final_grade;
+            $array[$name_var] = $grade;
+            $n = ($array[$name_var])*$weight;
+            if( $n <= 7){
+                echo ($name.":<br>");
+                echo ("<input type='number' value=".$n." max='70'><br>");
+            }
+            else{
+                echo ($name.":<br>");
+                echo ("<input type='text' value='Valor mayor que 7' max='70'><br>");
+            }
         }
         else{
-            
+            echo ($name.":<br>");
+            echo ("<input type='number' value=".($array[$name_var])." max='70'><br>");
+            $grade -=$array[$name_var]*$weight;
         }
-        echo ($name.":<br>");
-        echo ("<input type='number' value=".$array[$name_var]." max='70'><br>");
-      
+
+
+
+
+
+
+        
     }
     echo("      <h4>Nota Final:</h4><br>
                 <input type='text' value=".$final_grade."><br>
@@ -100,31 +124,5 @@ if($response){
         </form>");
 
 }
-/*
 
-if((isset($_GET['test1']))&&(isset($_GET['test2']))&&(isset($_GET['test3']))){
-    $t1=$_GET['test1'];
-    $t2=$_GET['test2'];
-    $t3=$_GET['test3'];
-    $fg=($t1+$t2+$t3)/3;
-}
-
-
-echo ("<form action='view2.php'>
-  <fieldset>
-    <legend>Personal information:</legend>
-    <input type='hidden' name='id' value=".$id."><br>
-    Prueba 1:<br>
-    <input type='text' name='test1' value=".$t1."><br>
-    Prueba 2:<br>
-    <input type='text' name='test2' value=".$t2."><br>
-    Prueba 3:<br>
-    <input type='text' name='test3' value=".$t3."><br><br>
-    <
-  </fieldset>
-</form>");*/
-
-//echo ("<br><a href='view.php?var=".$id."'>Volver a la calculadora</a>");
-
-// Finish the page.
 echo $OUTPUT->footer();

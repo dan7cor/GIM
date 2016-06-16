@@ -71,12 +71,6 @@ $PAGE->set_url('/mod/widget/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($widget->name));
 $PAGE->set_heading(format_string($course->fullname));
 
-/*
- * Other things you may want to set - remove if not needed.
- * $PAGE->set_cacheable(false);
- * $PAGE->set_focuscontrol('some-html-id');
- * $PAGE->add_body_class('newmodule-'.$somevar);
- */
 
 //database call
 
@@ -114,20 +108,22 @@ if ($widget->intro) {
 
 echo $OUTPUT->heading('Grade Calculator');
 
-$grades_flag=FALSE;
+$grades_flag=0;
 
 if($response){
     echo ("<form action='view2.php'>
         <fieldset>
             <legend>Tests:</legend>
                 <input type='hidden' name='id' value=".$USER->id."><br>");
+
+    //if you have grade items in the DB than you will be shown the input box for each item
     while($row = mysqli_fetch_array($response)){
 
         $name=$row['itemname'];
         $name_get=str_ireplace(" ","",$name);
         if(!isset($array[$name_get])){
             $array[$name_get]="0";
-            $grades_flag=TRUE;
+            $grades_flag++;
         }
         echo ($name.":<br>");
         echo ("<input type='number' name=".$name_get." value='".$array[$name_get]."' max='70'><br>  ");
@@ -137,7 +133,10 @@ if($response){
         </form>");
 
 }
-if($grades_flag){
+
+
+//if they have all their grades already uploaded, than they will not be able to modify their grades on the calculator
+if($grades_flag==1){
 echo("<br>");
 echo("<form action='view3.php'>     
          <h4>Nota Final:</h4><br>
@@ -148,14 +147,4 @@ echo("<form action='view3.php'>
         </form>");
 }
 
-
-
-
-    
-/*echo("<form>
-  Nota Final:<br>
-  <input type='text' name='final' value=''><br>
-</form>");*/
-
-// Finish the page.
 echo $OUTPUT->footer();

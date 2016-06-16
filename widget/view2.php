@@ -47,9 +47,8 @@ $PAGE->set_title('Calculadora');
 
 
 
-
+//Here you make the different querys to the database
 $query_test_names = "SELECT itemname,aggregationcoef2 FROM mdl_grade_items WHERE (id>1)";
-//$query_test_weight = "SELECT aggregationvoef2 FROM mdl_grade_items WHERE (id>1)";
 
 $response = @mysqli_query($dbc,$query_test_names);
 
@@ -58,6 +57,7 @@ $response = @mysqli_query($dbc,$query_test_names);
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Grade Calculator');
 
+//if the query is not NULL than you get the values of the grades on a form that is similar to the one where you asked for the grades
 if($response){
     $cont=0;
     $nota_final=0;
@@ -70,42 +70,26 @@ if($response){
         $weight=$row['aggregationcoef2'];
         $name_var=str_ireplace(" ","",$name);
         $grade=$_GET[$name_var]*$weight;
+
+        //you add the grades that have their weight included to the final grade
         $nota_final+=$grade;
         echo ($name.":<br>");
         echo ("<input type='number' value=".$_GET[$name_var]." max='70'><br>");
         $cont++;
     }
+
+
+
+
+
+
+    
+
     echo("      <h4>Nota Final:</h4><br>
                 <input type='text' value=".$nota_final."><br>
             </fieldset>
         </form>");
 
 }
-/*
 
-if((isset($_GET['test1']))&&(isset($_GET['test2']))&&(isset($_GET['test3']))){
-    $t1=$_GET['test1'];
-    $t2=$_GET['test2'];
-    $t3=$_GET['test3'];
-    $fg=($t1+$t2+$t3)/3;
-}
-
-
-echo ("<form action='view2.php'>
-  <fieldset>
-    <legend>Personal information:</legend>
-    <input type='hidden' name='id' value=".$id."><br>
-    Prueba 1:<br>
-    <input type='text' name='test1' value=".$t1."><br>
-    Prueba 2:<br>
-    <input type='text' name='test2' value=".$t2."><br>
-    Prueba 3:<br>
-    <input type='text' name='test3' value=".$t3."><br><br>
-    <
-  </fieldset>
-</form>");*/
-
-//echo ("<br><a href='view.php?var=".$id."'>Volver a la calculadora</a>");
-
-// Finish the page.
 echo $OUTPUT->footer();
